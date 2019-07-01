@@ -1,0 +1,14 @@
+
+#notes
+# remove the 2 last lines (reboot and unknow)
+#sed '$d' /tmp/.filetest | sed '$d' |sed '$d'
+#cat /tmp/.filetest
+#last | tr -s ' ' | cut -d' ' -f1,4,5,6,9
+#last -R | sort -k1,1 -u | tr -s ' ' | cut -f1,4,5,6,9 > /tmp/.filetest
+#awk -F'[ ]' '{if( $1 != "reboot" && $1 != "(unknown" && $1 != "wtmp" ) print $1}' /tmp/.filetest
+#_ncol=$(tput cols) #get terminal numbers of collumns
+#_center=$((_ncol/2))
+#f1=file1
+#f2=file2
+# last | sort -k1,1 -u
+# last | tr -s ' ' | cut -d' ' -f1,4,5,6,9

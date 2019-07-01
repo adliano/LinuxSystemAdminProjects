@@ -1,0 +1,15 @@
+#!/bin/bash
+#user_exist
+#script to check if user exist on system
+
+user_exist()
+{
+    getent passwd $1 &> /dev/null
+    return $?
+    # $? it's a status command , it gives you the result of the last 
+    # command used
+}
+
+if ! user_exist $1; then
+   echo "create account for $1"
+fi

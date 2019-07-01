@@ -1,0 +1,75 @@
+#!/bin/bash
+# Account manager 
+# Abbas Approach
+
+help()
+{
+    cat <<EOF
+        help msg here.....
+EOF
+}
+
+irina()
+{
+    (( $# != 1 )) && echo "usage:$(basename $0) CRN" && exit 1
+       getent group "c$1" | cut -d: -f4 | tr ',' '\n'
+}
+
+# File to hold users id
+fname=waiting_room
+>$fname
+
+#flags
+lflag=false;cflag=false;dflag=false
+
+options=":chdlf:u:"
+
+while getopts $options opt; do
+   case $opt in
+      h) help;;
+      c) cflag=true;;
+      d) dflag=true;;
+      f) [ -s $OPTARG ] &&  cat $OPTARG >> $fname;;
+      # -s will check if the file its empty
+      l) fflag=true;;
+      u) echo $OPTARG | tr ',' '\n' >> $fname;;
+   esac
+done
+
+shift $(($OPTIND))
+
+for f in $*; do
+   irina $f >> $fname
+done
+
+
+sort $fname | uniq > /tmp/myfile$$
+mv /tmp/myfile$$ $fname
+
+# create users
+if $cflag; then
+   while read user_name; do
+      #sudo useradd -m $user_name &> /dev/null
+      echo "create account for $user_name"
+      #echo "changeme" | sudo passwd --stdin $user_name
+      echo "password created for $user_name"
+   done < $fname
+fi
+
+# remove users
+if $dflag; then
+   while read user_name; do
+   #sudo userdel -r $user_name
+   echo "user $user_name REMOVED!"
+   done < $fname
+fi
+
+# list users
+if $lflag; do
+   cat $fname
+fi
+
+rm -f $fname
+
+exit 0
+

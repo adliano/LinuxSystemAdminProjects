@@ -1,0 +1,15 @@
+#!/bin/bash
+ 
+opts=":a:b:cd"
+
+while getopts $opts arg; do
+
+   case $arg in
+      a) echo $OPTARG;;
+      b) echo $OPTARG;;
+      c) echo $OPTIN ;;
+      d) echo "option d";;
+      ?) echo "invalid option -$OPTARG";;
+      :) echo "missing argumet";;
+   esac
+done

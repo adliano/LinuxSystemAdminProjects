@@ -1,0 +1,123 @@
+#!/bin/bash
+# CS260A HW4
+# Author: Adriano Alves
+# Date  : Mar 23 2018
+# File  : CTC
+# Objective : Script to display users login status
+#--------------- SOURCES ---------------#
+source ~/.bash_lib
+
+#--------------- VARIABLES ---------------#
+# file /var/log/wtmp its where system keep info about logins times
+_f1=/var/log/wtmp
+_f2=/tmp/.ctc_wtmp
+_f3=/tmp/.cts_tmp_usrs
+_today=`date +%Y-%m-%d`
+# Max length of user id is 32 chars (by useradd man page)
+_stc=32 #status column
+_llc=42 # last log column
+
+#******************** quitprompt *******************#
+# This function will set the quit prompt on the botton of screen
+# with a blik red color
+# 'tpu lines' command get the total of lines on terminal
+_quitprompt()
+{
+   BRED 
+   BLINK
+   locate $(tput lines) 0 
+   echo -n "Press Q to quit" 
+   RESET 
+}
+#******************** header *******************#
+# This function will set the header on the top of screen
+_header()
+{
+   CLS
+   FWHITE
+   BBLUE
+   FBLACK
+   BOLD
+   locate 1 0 
+   echo -n " LOGIN ID "
+   locate 1 $_stc 
+   echo -n " STATUS "
+   locate 1 $_llc
+   echo " LAST LOG "
+   RESET
+}
+#******************** showusrs *******************#
+# this function will get output from "last" command 
+# trim the multiples spaces and dump the result to a tmp file
+# after it will loop trough the file and remove the junk lines.
+# a blink green star will indicate current logged in users.
+_showusrs()
+{
+    _line=1
+    #remove repeated lines
+    last -R | sort -k1,1 -u | tr -s ' ' > $_f3
+ 
+    while read line; do
+       # remove junk lines
+       if [[ $line != reboot* && $line != \(* && 
+             $line != wtmp*  && $line != "" ]]; then
+
+          _usrid=$(echo $line | cut -d' ' -f1)
+          _LINE=$((++_line)) # current line used by locate 
+          _date=$(echo $line | cut -d' ' -f3,4,5,6)
+          _status=$(echo $line | cut -d' ' -f8)
+
+          echo -n "$_usrid "
+
+          locate $_LINE $_stc
+          if [[ $_status == logged ]]; then
+             BOLD 
+             echo -n "ONLINE"
+             FGREEN 
+             BLINK
+             echo "*"
+          else
+             BOLD
+             #FRED
+             echo -n "OFFLINE"
+          fi
+          RESET # reset all colors and fonts
+
+          locate $_LINE $_llc
+          echo $_date
+
+       fi
+    done < $_f3 
+    #/tmp/.filetest
+}
+
+# file /var/log/wtmp change at every login/out activites
+# make a clone file to compare  using diff command
+#any change on /var/log/wtmp will update the screen
+cp $_f1 $_f2
+_header
+_showusrs
+_quitprompt
+
+while true; do
+   # triged if file changes 
+   if ! diff $_f1 $_f2 >> /dev/null; then
+      CLS
+      cp $_f1 $_f2 
+      locate 2 0
+      _header
+      locate 3 1
+      _showusrs
+      _quitprompt
+   fi
+
+   # In the following line -t for timeout, -N for just 1 character
+   read -t 0.25 -N 1 input
+   # if 'Q' is pressed loop will stop
+   if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+      # The following line is for clear the screen on exit.
+      CLS
+      break 
+   fi
+done
+#END

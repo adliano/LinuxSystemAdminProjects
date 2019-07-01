@@ -1,0 +1,48 @@
+#!/bin/bash
+source ~/.bash_lib
+
+login_file=/tmp/loggedinusers
+logout_file=/tmp/loggedoutusers
+
+_getusr()
+{
+   if [ -f '/etc/passwd' ]; then
+      awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd
+   fi
+}
+
+_mkfiles()
+{
+   while read line; do
+      last $line | head -1
+      awk '{if($9 == "logged") $1 >> /tmp/loginusr}'
+   done < <(_getusr)
+}
+
+_showinfo()
+{
+   locate 1 1 
+   echo "LOGGED USERS" 
+
+   locate 2 1
+   echo "NO LOGGED USERS"
+
+   BRED
+   locate 30 0
+   echo Press Q to exit.
+   RESET
+}
+
+CLS
+
+while true; do
+
+# In the following line -t for timeout, -N for just 1 character
+read -t 0.25 -N 1 input
+# if 'Q' is pressed loop will stop
+if [[ $input = "q" ]] || [[ $input = "Q" ]]; then
+# The following line is for clear the screen on exit.
+CLS
+break 
+fi
+done

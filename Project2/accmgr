@@ -1,0 +1,189 @@
+#!/bin/bash
+# Adriano Alves
+# Jan 30 2018
+# CS260A HW2
+# script to create/delete users account
+# this scrip will create a temp file to hold all uusers
+# id and it will read from this file
+
+#************* variables *****************#
+gf="/etc/group"
+pf="/etc/passwd"
+h="@hills.ccsf.edu"
+id="aalves3"
+tmpf=$(mktemp)
+defaultpasswd="changeme"
+mka=false
+rma=false
+hasfile=false
+hasuser=false
+
+#***************************#
+help()
+{
+   cat <<EOF
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+EOF
+}
+#***************************#
+# Function to check if file is available on remote server
+# return 0 for true ans 1 for false
+canread()
+{
+   if ssh $id$h "test -e $1" &> /dev/null ;then
+       return 0
+   else 
+       return 1
+   fi
+}
+#***************************#
+hasuser()
+# function to check if user exists
+#id -u name gives you the id of that user.
+#if the user doesn't exist, you got command return value ($?)1
+{
+   id -u $1 &> /dev/null
+   return $?
+}
+#***************************#
+# ssh key used to void ask for password
+# this function will get all users from hills by the CRN
+husers()
+{
+   if canread $gf;then
+      ssh $id$h getent group c$1 | cut -d: -f4 | tr ',' '\n' 
+   else 
+      echo "$gf not available on $h!"
+      exit 1
+   fi
+}
+#***************************#
+# Available Usrs
+# function used for the -l option
+# it will list the current users available on the system.
+# regular users most have user id between 1000 and 65534
+susers()
+{
+   if [ -f $pf ];then
+      #compgen -u
+      awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534) print $1}' /etc/passwd
+   else
+      echo "$pf not available!"
+      exit 1
+   fi
+}
+#***************************#
+#Make Account
+# function to create accounts on system.
+mkacnt()
+{
+   if hasuser $1; then
+      echo "user $1 alredy exist"
+   else
+     #echo "create account for $user"
+     sudo useradd -m $1 &> /dev/null
+     echo $defaultpasswd | sudo passwd --stdin $1 &> /dev/null
+   fi
+}
+#***************************#
+#function to read file and concat to a temp file
+readfile()
+{
+   IFS=,
+   files=(${1})
+   for f in "${files[@]}"
+   do
+      if [ -f $f ];then
+         while read line
+         do
+            echo $line >> $tmpf
+         done<$f
+      else 
+         echo "invalid file $f" && exit 1
+      fi
+   done
+}
+#***************************#
+# Function to get user id from command line and add it 
+# to the temp file
+readuids()
+{
+   IFS=,
+   users=(${1})
+   for user in "${users[@]}"
+   do
+      echo $user >> $tmpf
+   done
+}
+#***************************#
+#this function will read each given crn and 
+#concatnate to the temp file
+readcrn()
+{
+   crns=(${1})
+   for crn in "${crns[@]}"
+   do
+      if [ $crn -ge 0 ] &> /dev/null; then
+         while read user
+         do
+            echo $user >> $tmpf
+         done< <(husers $crn)
+      else
+         echo "invalid CRN number :$crn"
+      fi
+   done
+}
+
+############### COMMAND LINE VALIDATION ###################
+(( $# < 1 )) && help && exit 1
+
+if [[ ! $1 == -* ]]; then #if option available
+   echo "missing option"
+else
+   # Options
+   options=":cdlL:f:u:h"
+   while getopts $options arg; do
+      case $arg in
+         c) mka=true;;
+         d) rma=true;;
+         l) susers; break;; 
+         L) husers $OPTARG; break;;
+         f) readfile $OPTARG;;
+         h) help ; break;;
+         u) readuids $OPTARG;;
+         \?) echo "invalid option -$OPTARG"; break; exit 1;;
+         \:) echo "option -$OPTARG requires argument"; break;exit 1;;
+      esac
+   done
+
+shift $((OPTIND-1)) 
+
+aaa=$@
+readcrn "${aaa[@]}"
+
+   # create account
+   if $mka; then
+      while read user 
+      do
+         mkacnt $user
+      done<$tmpf
+   fi
+
+   # remove account
+   if $rma; then
+      while read user 
+      do
+         sudo userdel -r $user
+        #echo "remove account for $user"
+      done<$tmpf
+   fi
+fi
+exit 0

@@ -1,0 +1,135 @@
+Script started on Sun 11 Feb 2018 08:21:32 PM PST
+]0;adliano@alcatraz:~/myCs260a/HW2[?1034h[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ whoami
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ date
+Sun Feb 11 20:21:41 PST 2018
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ pwd
+/home/adliano/myCs260a/HW2
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ hostname
+alcatraz
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr 
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -l
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -l[KL 34324
+stty: standard input: Inappropriate ioctl for device
+amoghtan
+achan61
+dworrell
+fnussbau
+idubinin
+igolovko
+jpeck
+mhe
+ncunana1
+nmajeed
+pkellihe
+sli325
+tfroehl1
+tlam68
+tsteve11
+aalves3
+mqwan
+abockove
+slee118
+tlopez31
+csilva19
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -L 34324[K[K[K[K[K[K[Kc 34324
+stty: standard input: Inappropriate ioctl for device
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -l
+oracle
+git
+adliano
+amoghtan
+achan61
+dworrell
+fnussbau
+idubinin
+igolovko
+jpeck
+mhe
+ncunana1
+nmajeed
+pkellihe
+sli325
+tfroehl1
+tlam68
+tsteve11
+aalves3
+mqwan
+abockove
+slee118
+tlopez31
+csilva19
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -lc 34324[1P 34324d 34324
+stty: standard input: Inappropriate ioctl for device
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -d 34324l[K
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -cu good [K,bad,ugk[Kly,abcd
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -cu good,bad,ugly,abcdl[K
+oracle
+git
+adliano
+good
+bad
+ugly
+abcd
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ ls /home
+[0m[38;5;27mabcd[0m  [38;5;27madliano[0m  [38;5;27mbad[0m  [38;5;27mgit[0m  [38;5;27mgood[0m  [38;5;27moracle[0m  [38;5;27mugly[0m
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ ls /homeaccmgr -lcu good,bad,ugly,abcd[1P[1@d
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -du good,bad,ugly,abcd[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls /home[K
+[0m[38;5;27madliano[0m  [38;5;27mgit[0m  [38;5;27moracle[0m
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ ls /homeaccmgr -du good,bad,ugly,abcd[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls /home[Kaccmgr -l
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ cat t[Kusers.txt 
+user_one
+user_two
+user_three
+aalves
+jalves
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -cf users.txt 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr  [K-l
+oracle
+git
+adliano
+user_one
+user_two
+user_three
+aalves
+jalves
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -lcf users.txt 
+user user_one alredy exist
+user user_two alredy exist
+user user_three alredy exist
+user aalves alredy exist
+user jalves alredy exist
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -cf users.txt [1P[1@d
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ accmgr -df users.txt c[C[C[C[C[C[C[C[C[C[C[C[Cl[K
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ 
+]0;adliano@alcatraz:~/myCs260a/HW2[adliano@alcatraz HW2]$ exit
+exit
+
+Script done on Sun 11 Feb 2018 08:24:43 PM PST

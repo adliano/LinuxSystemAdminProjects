@@ -1,0 +1,63 @@
+Script started on Tue 06 Feb 2018 07:50:15 PM EST
+]0;adliano@alcatraz:~/myCs260a/HW2[?1034h[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mwhoami
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mdate
+Tue Feb  6 19:50:21 EST 2018
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mhostname
+alcatraz
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr 
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -l
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37macc[K[K[K
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -l[Kcf users_file.txt 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -cf users_file.txt l[K
+oracle
+git
+adliano
+user_one
+user_two
+user_three
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -cu user_four,user_five,user_six
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -cu user_four,user_five,user_sixl[K
+oracle
+git
+adliano
+user_one
+user_two
+user_three
+user_four
+user_five
+user_six
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -L
+option -L requires argument
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -L 34[K[K[K[K[K[K[K[K[K[K[K[K[K[K# i need to set my ssh again- againk againe againy again
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m# i need to set my ssh-key again[21P./accmgr -L[Kh][K
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -h[Kk
+invalid option -k
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m./accmgr -k[Ku
+option -u requires argument
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mexit
+exit
+
+Script done on Tue 06 Feb 2018 07:53:13 PM EST

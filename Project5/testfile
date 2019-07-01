@@ -1,0 +1,150 @@
+/1 /atlas /bin /boot /dev /etc /ftp /home /lib /lib64 /media /mnt /opt /oracle /proc /root /run /sbin /srv /sys /tmp /usr /var
+
+Author: put your name here
+Date : 04/27/18
+Program Name: MyJava.java
+Objective: This program does nothing.
+
+*/
+
+//import java.awt.*;
+//import java.applet.*;
+//import java.util.*;
+//import java.io.*;
+//import javax.swing.*;
+
+class MyJava
+{
+public static void main(String args[])
+{
+System.out.println("My Test JAVA");
+}
+}
+#!/usr/bin/bash
+# Author: Abbas Moghtanei
+# Version 7.0
+shopt -s expand_aliases
+alias print='echo'
+
+####################################aliases###################################
+alias CLS='printf "033[2J" ;printf "033[%d;%dH" 1 1'
+alias BOLD='printf "033[1m"'
+alias BLINK='printf "033[5m"'
+alias REVERSE='printf "033[30m" ;printf "033[47m"' #black & white
+alias REVERSE1='printf "033[7m"' #color
+alias ITALICS='printf "033[2m"'
+alias RESET='printf "033[0m"'
+alias INVIS='printf "033[8m"'
+#******************** ForGround Colors bash_lib MyJava.class MyJava.java noname testfile unsplit
+alias FBLACK='printf "033[30m"'
+alias FRED='printf "033[31m"'
+alias FGREEN='printf "033[32m"'
+alias FYELLOW='printf "033[33m"'
+alias FBLUE='printf "033[34m"'
+alias FMAGENTA='printf "033[35m"'
+alias FCYAN='printf "033[36m"'
+alias FWHITE='printf "033[37m"'
+#******************** BackGround Colors bash_lib MyJava.class MyJava.java noname testfile unsplit
+alias BBLACK='printf "033[40m"'
+alias BRED='printf "033[41m"'
+alias BGREEN='printf "033[42m"'
+alias BYELLOW='printf "033[43m"'
+alias BBLUE='printf "033[44m"'
+alias BMAGENTA='printf "033[45m"'
+alias BCYAN='printf "033[46m"'
+alias BWHITE='printf "033[47m"'
+#######################################loop()#################################
+loop()
+{
+
+#command line validation
+if [ $# -eq 0 ]; then
+echo "usage: $0 -i command(s)"
+echo "usage: $0 n,m command(s)"
+return 1
+fi
+#initialization
+
+__from=0
+__to="$1"
+__incr=1
+
+has_comma=$(echo "$__to" | grep ",") #comma in loop range like 1,4
+
+if [ "$__to" = "-i" -o "$__to" = "-I" ]; then #check for infinite loop
+__from=1
+__to=1
+__incr=0
+elif [ -n "$has_comma" ]; then
+__t=$(echo "$__to" | cut -c1)
+if [ "$__t" = "," ]; then #for example ,4
+echo "$0 Invalid range"
+return 1
+fi
+__t=$(echo "$__to" | cut -c`echo "$__toc"|wc -c`)
+if [ "$__t" = "," ]; then #for example 4,
+echo "$0 Invalid range"
+return 1
+fi
+__from=$(echo "$__to" | cut -d',' -f1)
+__to=$(echo "$__to" | cut -d',' -f2)
+
+echo "$__to" | grep -qs "[0-9]"
+if [ $? -ne 0 ]; then
+echo "$0 error-- must be numeric"
+return 1
+fi
+(( __to += 1 ))
+fi
+
+#Now check the validity of the loop range
+
+echo "$__from" | grep -qs "[0-9]"
+if [ $? -ne 0 ]; then
+echo "$0 error-- must be numeric"
+return 1
+fi
+echo "$__to" | grep -qs "[0-9]"
+if [ $? -ne 0 ]; then
+echo "$0 error-- must be numeric"
+return 1
+fi
+
+shift
+
+while (( __from += __incr )) && (( __from <= __to ))
+do
+eval $*
+done
+return
+}
+#######################################rnd()###################################
+rnd()
+{
+if [ $# -eq 0 ]; then
+echo "rnd Usage: n1 <n2>"
+return 1
+fi
+if [ $# -eq 1 ]; then
+num1=0; num2=$1
+else
+num1=$1; num2=$2
+fi
+(( num3 = $RANDOM % (num2 - num1 + 1) + num1 ))
+echo $num3
+}
+###################################pow()######################################
+pow()
+{
+declare -i number __p __n __s __flag
+if (( $# < 2 )); then
+printf "Usage: $0 base powern"
+return 1
+fi
+if (( $2 < 0 )); then
+(( __power = (-1) bash_lib MyJava.class MyJava.java noname testfile unsplit $2 ))
+__flag=0
+else
+(( __power = $2 ))
+__flag=1
+fi

@@ -1,0 +1,19 @@
+#!/bin/bash
+#demo about getopts
+
+
+options=":dL:f:u:hcl"
+
+   while getopts $options arg; do
+      case $arg in
+      d) echo "option d called";;
+      L) echo "option L called";;
+      f) echo "option f called";;
+      h) echo "option h called";;
+      u) echo "option u called";;
+      c) echo "option c called";break;;
+      l) echo "option l called";;
+      \?) echo "invalid option -$OPTARG"; break;;
+      \:) echo "option -$OPTARG requires argument"; break;;
+      esac
+   done

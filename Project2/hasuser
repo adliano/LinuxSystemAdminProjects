@@ -1,0 +1,15 @@
+#!/bin/bash
+
+hasuser()
+#id -u name gives you the id of that user.
+#if the user doesn't exist, you got command return value ($?)1
+{
+   id -u $1 &> /dev/null
+   return $?
+}
+
+if hasuser $1; then
+   echo "user $1 exists"
+else
+   echo "user $1 not available"
+fi

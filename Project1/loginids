@@ -1,0 +1,64 @@
+#!/bin/bash
+# Author : Adriano Alves
+# Date   : Jan 25 2018
+# Course : CS260A Linux Adm.
+# Objective : HW3 loginids , script to read info from 
+# /etc/group and display by options
+
+#************* Variables ***********#
+group_file='/etc/group'
+opts=":chn:t:"
+
+#************** help() ************#
+help()
+{
+    cat<<EOF
+usage:$(basename $0) <option> <CRN>
+
+    CRN : list all menbres of the course 
+   -c   : display number of courses offered by CCSF
+   -h   : display help menu
+   -n   : display number of members of given CRN
+   -t   : display name of the teacher of given CRN
+
+EOF
+}
+#*********** list_names() *********#
+list_names()
+{
+   if [ -f $group_file ]; then
+      grep -i "^C$1" $group_file | cut -d: -f4 | tr ',' '\n'
+   else
+       echo "Group File not Available!"
+       exit 1
+   fi
+}
+
+######### Command line validation #########
+# most have one or two arguments
+(( $# < 1 || $# > 2 )) && help && exit 1
+
+# command line options
+if [[ $1 == -* ]]; then
+   while getopts $opts arg; do
+      case $arg in
+         c) grep -i "^c" $group_file | wc -l ;break;;
+         h) help;break;;
+         n) list_names ${OPTARG} | wc -l;break;;
+         t) list_names ${OPTARG} | head -n 1 ;break;;
+         \?) echo "invalid option -$OPTARG";break;;
+         \:) echo "option -$OPTARG requires argument";break;;
+      esac
+   done
+# if just CRN entered list the members from the group
+else
+   shift $((OPTIND-1))
+   if [[ "$1" -gt 0 ]];then
+       list_names $1
+   else
+      echo "invalid CRN number" && exit 1
+   fi
+fi
+
+exit 0
+#END

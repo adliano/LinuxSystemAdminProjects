@@ -1,0 +1,55 @@
+Script started on Sun 28 Jan 2018 07:08:05 PM PST
+hills.ccsf.edu/students/aalves3/myCs260a/whoami
+aalves3
+hills.ccsf.edu/students/aalves3/myCs260a/date
+Sun Jan 28 19:08:18 PST 2018
+hills.ccsf.edu/students/aalves3/myCs260a/
+hills.ccsf.edu/students/aalves3/myCs260a/loginids
+usage:loginids <option> <CRN>
+
+    CRN : list all menbres of the course 
+   -c   : display number of courses offered by CCSF
+   -h   : display help menu
+   -n   : display number of members of given CRN
+   -t   : display name of the teacher of given CRN
+
+hills.ccsf.edu/students/aalves3/myCs260a/loginids -c
+678
+hills.ccsf.edu/students/aalves3/myCs260a/loginids 34324
+amoghtan
+achan61
+amurgui2
+cramir70
+dworrell
+fnussbau
+idubinin
+igolovko
+jpeck
+mhe
+ncunana1
+nmajeed
+pkellihe
+sli325
+tfroehl1
+tlam68
+tsteve11
+aalves3
+mqwan
+wliao
+abockove
+slee118
+tlopez31
+csilva19
+csangkla
+hills.ccsf.edu/students/aalves3/myCs260a/logn    
+hills.ccsf.edu/students/aalves3/myCs260a/login       
+hills.ccsf.edu/students/aalves3/myCs260a/loginids -n 34324
+25
+hills.ccsf.edu/students/aalves3/myCs260a/loginids 34324              
+hills.ccsf.edu/students/aalves3/myCs260a/logind      
+hills.ccsf.edu/students/aalves3/myCs260a/loginids -t 34324
+amoghtan
+hills.ccsf.edu/students/aalves3/myCs260a/exit
+exit
+
+Script done on Sun 28 Jan 2018 07:10:18 PM PST

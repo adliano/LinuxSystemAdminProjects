@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+chkfile()
+{
+   if ssh aalves3@hills.ccsf.edu "test -e /etc/group";then
+           echo "exists"
+   fi
+}
+
+chkfile

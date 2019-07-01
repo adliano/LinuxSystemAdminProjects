@@ -1,0 +1,18 @@
+# NOTES
+#if isBinary MyJava.class; then
+#echo "works! is binary"
+#fi
+   #for i in `ls x* | sort -V`; do 
+   #echo $i
+   #done
+
+#              while read _line                       #read line by line each file
+#              do
+#                 if (( $_lines_counter < $_line_numbers )); then
+#                    echo $_line >> $_output_file
+#                    _lines_counter=$[_lines_counter + 1]
+#                 fi
+#              done<$_file #end of while loop
+#           else #if less line then we need 
+#              cat $_file >> $_ouput_file
+#     _lines_counter=0    #count the lines

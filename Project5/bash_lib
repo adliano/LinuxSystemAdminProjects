@@ -1,0 +1,1171 @@
+#!/usr/bin/bash
+# Author: Abbas Moghtanei
+# Version 7.0
+shopt -s expand_aliases
+alias print='echo'
+
+####################################aliases###################################  
+alias CLS='printf      "\033[2J" ;printf "\033[%d;%dH" 1 1'
+alias BOLD='printf     "\033[1m"'
+alias BLINK='printf    "\033[5m"'
+alias REVERSE='printf  "\033[30m" ;printf "\033[47m"' #black & white
+alias REVERSE1='printf "\033[7m"'                     #color
+alias ITALICS='printf  "\033[2m"'
+alias RESET='printf    "\033[0m"'
+alias INVIS='printf    "\033[8m"'
+#******************** ForGround Colors ***********************  
+alias FBLACK='printf   "\033[30m"'
+alias FRED='printf     "\033[31m"'
+alias FGREEN='printf   "\033[32m"'
+alias FYELLOW='printf  "\033[33m"'
+alias FBLUE='printf    "\033[34m"'
+alias FMAGENTA='printf "\033[35m"'
+alias FCYAN='printf    "\033[36m"'
+alias FWHITE='printf   "\033[37m"'
+#******************** BackGround Colors ***********************
+alias BBLACK='printf   "\033[40m"'
+alias BRED='printf     "\033[41m"'
+alias BGREEN='printf   "\033[42m"'
+alias BYELLOW='printf  "\033[43m"'
+alias BBLUE='printf    "\033[44m"'
+alias BMAGENTA='printf "\033[45m"'
+alias BCYAN='printf    "\033[46m"'
+alias BWHITE='printf   "\033[47m"'
+#######################################loop()################################# 
+loop()
+{
+   
+   #command line validation
+   if [ $# -eq 0 ]; then
+      echo "usage: $0 -i  command(s)"
+      echo "usage: $0 n,m  command(s)"
+      return 1
+   fi
+   #initialization
+
+   __from=0
+   __to="$1"
+   __incr=1
+
+   has_comma=$(echo "$__to" | grep ",") #comma in loop range like 1,4
+
+   if [ "$__to" = "-i" -o "$__to" = "-I" ]; then #check for infinite loop
+      __from=1
+      __to=1
+      __incr=0
+   elif [ -n "$has_comma" ]; then
+      __t=$(echo "$__to" | cut -c1)
+      if [ "$__t" = "," ]; then   #for example ,4
+         echo "$0  Invalid range"
+         return 1
+      fi
+      __t=$(echo "$__to" | cut -c`echo "$__to\c"|wc -c`)
+      if [ "$__t" = "," ]; then  #for example 4,
+         echo "$0  Invalid range"
+         return 1
+      fi
+      __from=$(echo "$__to" | cut -d',' -f1)
+      __to=$(echo "$__to" | cut -d',' -f2)
+
+      echo "$__to" | grep -qs "[0-9]"
+      if [ $? -ne 0 ]; then
+         echo "$0   error-- must be numeric"
+         return 1
+      fi
+      (( __to += 1 ))
+   fi
+
+   #Now check the validity of the loop range
+
+   echo "$__from" | grep -qs "[0-9]"
+   if [ $? -ne 0 ]; then
+      echo "$0   error-- must be numeric"
+      return 1
+    fi
+    echo "$__to" | grep -qs "[0-9]"
+    if [ $? -ne 0 ]; then
+       echo "$0   error-- must be numeric"
+       return 1
+    fi
+   
+   shift
+
+   while (( __from += __incr )) && (( __from <= __to ))
+   do
+        eval $* 
+   done
+return
+}
+#######################################rnd()###################################
+rnd()
+{
+   if [ $# -eq 0 ]; then
+      echo "rnd  Usage: n1 <n2>"
+      return 1
+   fi
+   if [ $# -eq 1 ]; then
+      num1=0; num2=$1
+   else
+      num1=$1; num2=$2    
+   fi
+   (( num3 = $RANDOM % (num2 - num1 + 1) + num1 ))
+   echo $num3
+}
+###################################pow()######################################
+pow()
+{
+   declare -i number __p __n __s __flag
+   if (( $# < 2 )); then
+      printf "Usage: $0 base power\n"
+      return 1
+   fi
+   if (( $2 < 0 )); then
+      (( __power = (-1) * $2 ))
+      __flag=0
+   else
+      (( __power = $2 ))
+      __flag=1
+   fi
+
+   __s=$1; __p=1; __n=0
+
+   while (( __n += 1 )) && (( __n <= __power )) && (( __p *= __s ))
+   do :; done
+
+   if (( __flag == 0 )); then
+      (( __p = 1 / __p ))
+   fi
+   echo $__p
+   return 0
+}
+#####################################calc()####################################
+calc()
+{
+     declare -i number  __x="$@"
+     echo "$__x"
+}
+
+########################################gen()####################################
+# generates integer numbers. For example gen 1 3 would generate 1, 2 and 3 and
+# gen 4 would generate 1, 2, 3 and 4.
+gen()
+{
+    declare -i number _c
+    if (( $# == 0 )); then     # Error
+       return 1
+    fi
+
+    if (( $# == 1 )); then
+       _from=1
+       _to=$1
+    else
+       _from=$1
+       _to=$2
+    fi
+
+    (( _c = _from ))
+    while  (( _c <= _to ))
+    do
+           print -- $_c
+           (( _c += 1 )) 
+    done
+    return 0    
+}
+
+#example: (remove # to activate the examples)
+
+#   for i in $(gen 0  7)
+#   do
+#       echo "i=$i"
+#   done
+
+#   for j in $(gen -4 4)
+#   do
+#       echo "j=$j"
+#   done
+
+##################################largest()###############################
+# Find the largest number. Numbers are in the command line or piped to the
+# function.
+largest()
+{
+#  get items from the command line
+   if (( $# > 0 )); then
+      MAX=$1
+      shift
+      while (( $# > 0 )); do
+         if (( $1 > $MAX )); then
+            MAX=$1
+         fi
+         shift
+      done
+   else
+#  get items from pipe
+      read line
+      MAX=$line
+      while read line; do
+         if (( $line > $MAX )); then
+            MAX=$line
+         fi
+      done 
+   fi
+   echo $MAX
+}
+##################################smallest()###############################
+# Find the smallest number. Numbers are in the command line or piped to the
+# function.
+smallest()
+{
+#  get items from the command line
+   if (( $# > 0 )); then
+      MIN=$1
+      shift
+      while (( $# > 0 )); do
+         if (( $1 < $MIN )); then
+            MIN=$1
+         fi
+         shift
+      done
+   else
+#  get items from pipe
+      read line
+      MIN=$line
+      while read line; do
+         if (( $line < $MIN )); then
+            MIN=$line
+         fi
+      done 
+   fi
+   echo $MIN
+}
+#Examples (remove # to activate the following commands):
+#  echo  largest filesize is $(ls -l | sed "1d" | awk '{print $5}' | largest
+#  echo  smallest number is $(smallest 45 2 18 39 37 26)
+
+####################################isdigit()#################################
+# returns true (0) if the argument is a digit and false (1) otherwise
+# 
+isdigit()
+{
+     if (( $# != 1 )); then
+        print "Invalid argument"
+        return 1
+     fi
+     case $1 in
+        [0-9])  return 0;;
+        ?)      return 1;;
+     esac
+}
+####################################isupper()#################################
+# returns true (0) if the argument is upper and false (1) otherwise
+# 
+isupper()
+{
+     if (( $# != 1 )); then
+        print "Invalid argument"
+        return 1
+     fi
+     case $1 in
+        [A-Z])  return 0;;
+        ?)      return 1;;
+     esac
+}
+####################################islower()#################################
+# returns true (0) if the argument is lower and false (1) otherwise
+# 
+islower()
+{
+     if (( $# != 1 )); then
+        print "Invalid argument"
+        return 1
+     fi
+     case $1 in
+        [a-z])  return 0;;
+        ?)      return 1;;
+     esac
+}
+####################################isalpha()#################################
+# returns true (0) if the argument is alpha and false (1) otherwise
+# 
+isalpha()
+{
+     if (( $# != 1 )); then
+        print "Invalid argument"
+        return 1
+     fi
+     if  isupper $1; then return 0; fi
+     if  islower $1; then return 0; fi
+     return 1
+}
+####################################isalnum()#################################
+# returns true (0) if the argument is alpha numeric and false (1) otherwise
+# 
+isalnum()
+{
+     if (( $# != 1 )); then
+        print "Invalid argument"
+        return 1
+     fi
+     if  isalpha $1; then return 0; fi
+     if  isdigit $1; then return 0; fi
+     return 1
+}
+#Example (remove # to activate the lines)
+#echo "give me a character \c"; read c
+#if isalnum digit $c; then
+#   echo this is a digit
+#elif isalpha $c; then
+#   echo this is alpha
+#elif isupper $c; then
+#   echo this is upper
+#elif islower $c; then
+#   echo this is lower
+#else
+#   echo I do not know
+#fi
+###################################isnumber()*********************************
+# This function checks if the argument is numeric or not.
+#
+isnumber()
+{
+    if (( $# != 1 )); then
+       print "Invalid argument"
+       return 1
+    fi
+    if echo "$1\c" | grep "^[0-9][0-9]*$" 1> /dev/null; then
+       return 0
+    else
+       return 1
+    fi
+}
+################################ishardlink()**********************************
+ishardlink()
+{
+   if (( $# != 1 )); then
+      print "Invalid argument"
+      return 1
+   fi
+   _a=$(ls -l "$1" | grep "^[^d]")
+   _b=$(ls -l "$1" | awk '{print $2}')
+   if [[ -n "$_a"  && "$_b" > 1 ]]; then 
+      return 0
+   else
+      return 1
+   fi
+}
+#######################################ord()####################################
+# The ord function returns the ASCII value of the character.    
+# Syntax:  ord  character
+#
+ord()
+{
+   echo "$@\c" | perl -e 'print ord(<ARGV>)'
+   return $?
+}
+#######################################char()###################################
+# The char function returns the character corresponding to the ASCII value.
+# Syntax:  char  ASCII value
+#
+char()
+{
+   echo "$@\c" | perl -e 'print chr(<ARGV>)'
+   return $?
+}
+
+# Examples:  (remove # to activate the lines)
+#echo "The ASCII value of A is $(ord A)"
+#echo "68 is the ASCII value of $(char 68)"
+##################################isbinary()##################################
+isbinary()
+{
+   echo "$@\c" | perl -e 'print 1 if -B <ARGV>' 
+   return $?
+}
+##################################istext()####################################
+istext()
+{
+   echo "$@\c" | perl -e 'print 1 if -T <ARGV>' 
+   return $?
+}
+
+#####################################ereol()####################################
+# This function would erase every thing from the location of the cursor to
+# the end of the line. For example ereol 12 50 would erase every thing on
+# row 12 from column 50 to the end of the row.
+ereol()
+{
+    if (( $# != 2 )); then return 1; fi
+    row=$1
+    col=$2
+    blk=" "
+
+    (( dif = 80 - col ))
+    while (( dif -= 1 )) && (( dif >= 0 )); do
+        blk="$blk"" "    
+    done
+
+    LOCATE $row $col; print "$blk"
+}
+
+#####################################concat()#################################
+concat()
+{
+   s=
+   for x in "$@"; do
+     s=${s}$x
+   done
+   print $s
+}
+###################################concat_ws()################################
+concat_ws()
+{
+   s=
+   delim=$1
+   shift
+   for x in "$@"; do
+     s=${s}${delim}${x}
+   done
+   print $(print $s | cut -d$delim -f2-)
+}
+#######################################occ()###################################
+# The occ function returns the number of occurrences of the second string
+# in the first string. For example if if want to know how many times the
+# string "he" is repeated in the string "he said he was there", we can write:
+# echo $(occ "he said he was there" "he").
+occ()
+{
+   declare -i number c=0 i len1 len2
+
+    case $# in
+    2)    i=1;;
+    3)    i=$3;;
+    *)    return 1;;
+    esac
+
+   
+   if (( $# != 2 )); then return 1; fi
+   str="$1"
+   target="$2"
+   len1=$(echo "$1\c" | wc -c)
+   len2=$(echo "$2\c" | wc -c)
+   # For some mysterious reasons the following while loop would not work
+   # if len2 is 1. Therefore, I am using the for loop for this special case. 
+   if (( len2 == 1 )); then
+      for i in $(gen $len1); do
+         x=$(expr substr "$str" $i $len2)  
+         if [ "$x" = "$target" ]; then 
+            (( c += 1 ))
+         fi  
+         (( i += 1 ))
+      done
+   else
+      while  (( i <= len1 - len2 + 1 )); do
+         x=$(expr substr "$str" $i $len2)  
+         if [ "$x" = "$target" ]; then 
+            (( c += 1 ))
+            (( i = i + len2 - 1 ))
+         else
+            (( i += 1 ))
+         fi 
+      done
+   fi 
+   echo $c
+   return 0
+}     
+# Examples: remove # to activate the following lines:
+#a="abbas-good-bad"
+#b="today was hot and I had a hot dog"
+#c="I love hot days"
+#d="hot dog is good"
+#e="hot"
+#f="kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+#echo $(occ "$a" "a")    
+#echo $(occ "$b" "hot")    
+#echo $(occ "$c" "hot")    
+#echo $(occ "$d" "hot")    
+#echo $(occ "$e" "hot")    
+#echo $(occ "$f" "k")    
+#echo $(occ "$f" "g")    
+#######################################vacuum()################################
+# This function removes all spaces from the string. For example
+# vacuum "this    is     nice" or echo "this    is   nice\c" | vacuum
+# would result in thisisnice .
+#
+vacuum()
+{
+   if (( $# == 0 )); then
+      while read line; do :; done
+   else
+      line="$@"
+   fi
+   echo "$line\c" | tr -d ' '
+   return 0
+} 
+########################################rpt()##################################
+# This function sets up the string by repeating the character n times, where
+# n is passed to the function as the second argument.
+# For example  rpt H 5  would result in  HHHHH or   rpt "john" 3 would
+# produce johnjohnjohn
+#
+rpt()
+{
+    declare -i number  i=0  
+    if (( $#  !=  2 )); then  return 1; fi
+    while (( i += 1 )) && (( i <= $2 )); do
+        echo "$1\c"
+    done
+    return 0
+}
+#######################################strlen()####################################
+#  This functions gives the length of the string. For example strlen "abbas"
+#  would result in 5 or echo "today was hot\c" | strlen would result in 13.
+strlen()
+{
+   if (( $# == 0 )); then
+       while read line; do :; done
+   else
+       line="$@"
+   fi
+   echo ${#line}
+   return 0
+}
+######################################strstr()################################
+# This function gives the location of the substring (2nd argument) in the
+# string (1st argument) or returns -1 if substring is not found. for example
+# strstr "Today was hot and windy" "hot" would result in 10 . The first
+# location  in the string is 0. It the 3rd argument is used, then it would
+# show the staring search location (default is 0).
+strstr()
+{
+    case $# in
+    2)    loc=1;;
+    3)    loc=$3;;
+    *)    return 1;;
+    esac
+    len1=$(strlen "$1")
+    len2=$(strlen "$2")
+    while (( loc <= len1 - len2 + 1 )); do
+        x=$(expr substr "$1" $loc $len2)
+        if [ "$x" != "$2" ]; then
+           (( loc += 1 ))
+           continue
+        fi
+        echo $loc
+        return 0
+    done
+    echo "-1"
+    return 0
+}
+# Examples: remove # to activate the lines
+#a="today was hot and I had a hotdog"
+#b="good day"
+#c="good"
+#d="I love it"
+#strstr "$a" "hot"
+#strstr "$b" "good"
+#strstr "$c" "good"
+#strstr "$d" "I"
+#strstr "$d" "t"
+#strstr "$a" "hot" 13
+
+###################################LOCATE()###################################
+LOCATE()  
+{
+    printf "\033[%d;%dH" $1 $2
+}
+###################################locate()##################################
+#More portable than LOCATE.
+
+locate()
+{
+   tput cup $1 $2
+}
+#####################################BOX()####################################
+BOX()
+{
+  (                       # run it in the subshell to avoid loop intermingle
+
+      declare -i number r1 c1 r2 c2 i
+      if [ $# -eq 4 ]; then
+         style="\*"
+      else
+         style="$5"
+      fi
+
+      r1=$1; c1=$2; r2=$3; c2=$4
+      (( z = c2 - c1 - 1 ))
+      if [ "$style" = "1" ]; then
+         a1=' '; a2=' '; a3=' ';  a4=' ';  a5=' '; a6=' '
+         printf  "\033[30m" ;printf "\033[47m"
+      else   
+         a1=$style; a2=$style; a3=$style; a4=$style; a5=$style; a6=$style
+      fi
+      line="" 
+      loop 1,$z '{
+         line=`echo "${line}$a2\c"`;
+      }' 
+      
+      LOCATE $r1 $c1; printf $a1; printf $line; printf $a3
+      LOCATE $r2 $c1; printf $a4; printf $line; printf $a5
+      
+      (( i = r1 + 1 ))
+      while  [ "$i" -lt "$r2" ]
+      do
+          LOCATE $i $c1; printf $a6
+          LOCATE $i $c2; printf $a6
+          (( i += 1 ))
+      done
+                 
+  )
+}
+#####################################box()####################################
+# This function draws a box with a solid line.
+
+box()
+{
+  (                       # run it in the subshell to avoid loop intermingle
+
+      declare i- number  r1 c1 r2 c2 i
+      if (( $# != 4 )); then
+         echo "Usage: box r1  c1  r2  c2"
+         exit 1
+      fi
+
+      r1=$1; c1=$2; r2=$3; c2=$4
+
+      (( z = c2 - c1 - 1 ))
+         a1=$(tput smacs); a1=$a1"l"    #Left upper corner
+         a2=$(tput smacs); a2=$a2"q"    #Horizontal line
+         a3=$(tput smacs); a3=$a3"k"    #Right upper corner
+         a4=$(tput smacs); a4=$a4"m"    #Left lower corner
+         a5=$(tput smacs); a5=$a5"j"    #Right lower corner
+         a6=$(tput smacs); a6=$a6"x"    #Vertical line
+
+      line=""
+      loop 1,$z '{
+         line=`echo "${line}$a2\c"`;
+      }'
+
+      locate $r1 $c1; printf $a1; printf $line; printf $a3
+      locate $r2 $c1; printf $a4; printf $line; printf $a5
+
+      (( i = r1 + 1 ))
+      while  [ "$i" -lt "$r2" ]
+      do
+          locate $i $c1; printf $a6
+          locate $i $c2; printf $a6
+          (( i += 1 ))
+      done
+      tput sgr0
+  )
+}
+
+#######################################getch()#######################################
+#   acts like getch in C   ( get char no echo )
+getch()
+{
+   stty raw -echo
+   __ans=$(dd bs=1 count=1 2> /dev/null)
+   stty -raw echo
+   echo "$__ans"
+}
+#######################################getche()######################################
+#   acts like getche in C  ( get char with echo )
+getche()
+{
+   stty raw 
+   __ans=$(dd bs=1 count=1 2> /dev/null)
+   stty -raw
+   echo "$__ans"
+}
+#####################################toupper()#################################
+# This function converts its command line string to upper. It also accept
+# the string being piped to it
+#
+toupper()
+{
+   if (( $# > 0 )); then
+      echo "$@\c" | tr '[a-z]' '[A-Z]'
+   else
+      read line
+      echo "$line\c" | tr '[a-z]' '[A-Z]'
+   fi   
+}
+#####################################tolower()#################################
+# This function converts its command line string to lower. It also accept
+# the string being piped to it
+#
+tolower()
+{
+   if (( $# > 0 )); then
+      echo "$@\c" | tr '[A-Z]' '[a-z]'
+   else
+      read line
+      echo "$line\c" | tr '[A-Z]' '[a-z]'
+   fi   
+}
+#Examples (remove # to activate the following lines
+#echo $(toupper Abbas is testing 1234 now)
+#echo $(echo abbas is here to test 1234 now | toupper)
+#echo $(tolower ABBAS IS TESTING 1234 NOW)
+#echo $(echo ABBAS IS HERE TO TEST 1234 NOW | tolower)
+
+#######################################getkey()######################################
+getkey()
+{
+   __a=$(getch)              # get a char.
+   __b=$(printf "%d" $__a)   # get the ascii value (like atoi in C)
+
+   if (( __b != 27 )); then  # check for the ESC char.
+       echo "$__a"           # this is a normal char.
+       return 0
+   fi
+   __a=$(getch)              # char 91
+   __a=$(getch)              # char  1
+   __b=$(printf "%d" $__a)   # get the ascii value (like atoi)
+
+   if (( __b == 0 )); then 
+      echo "HOME"
+      return 0
+   fi
+#  __c=$(getch)              # termnator 
+   __b=$(printf "%d" $__a)   # get the ascii value (like atoi)
+   if (( __b != 1 )); then   # not a function key
+      case "$__b" in
+           2)   echo "INS"     ;;
+           5)   echo "PGUP"    ;;
+           6)   echo "PGDN"    ;;
+          65 )  echo "UP_ARROW";;
+          66 )  echo "DN_ARROW";;
+          67 )  echo "RH_ARROW";;
+          68 )  echo "LF_ARROW";;
+      esac
+
+    else
+      __a=$(getch)              # we need to check this
+      __c=$(getch)              # termnator 
+      __b=$(printf "%d" $__a)   # get the ascii value (like atoi)
+
+      case "$__b" in
+           [1-9])  echo "F$__b";;   # return F1, F2, F3,...
+           *    )  echo "0";;       # this is an error
+      esac
+   fi
+   return 0
+}
+########################################substr()##################################
+# Syntax:  substr string location length
+# This function picks lenght bytes from the specified location of the string.
+# For example substr today 2 3 would result in oda.
+# OR  echo "today\c" | substr - 2 3  result in oda.
+substr()
+{
+   if [ "$1" = "-" ]; then
+      while read line; do :; done
+   else
+      line="$1"
+   fi
+   expr substr "$line" "$2" "$3"
+}
+#######################################left()#####################################
+# Syntax: left string length.
+# This function picks length bytes from the left side of the string.
+# For example left today 3 would result in tod.
+# OR  echo "today\c" | left - 3 would result in tod.
+left()
+{
+   #substr "$1" 1 $2
+   if [ "$1" = "-" ]; then
+      while read line; do :; done
+   else
+      line="$1"
+   fi
+   echo "$line" | cut -c1-$2
+}
+#######################################right()####################################
+# Syntax: right string length.
+# This function picks length bytes from the right side of the string.
+# For example right today 3 would result in day.
+# OR  echo "today\c" | right - 3 would result in day.
+right()
+{
+#  __len=`expr length "$1"`
+#  substr "$1" `expr $__len - $2 + 1` $2
+   if [ "$1" = "-" ]; then
+      while read line; do :; done
+   else
+      line="$1"
+   fi
+   __len=`echo "$line\c" | wc -c`
+   (( __loc = __len - $2 + 1 ))
+   echo "$line" | cut -c$__loc-$__len 
+}
+#####################################prefix()#####################################
+# Syntax: prefix string1 string2
+# Syntax: prefix - string2
+# This function would prefix string1 to string2. If '-' is used in place of
+# string1, then string1 must be piped to the function. 
+prefix()
+{
+    if [ "$1" = "-" ]; then
+       while read line; do :; done
+    else
+       line="$1"
+    fi
+    shift
+    echo "$line""$@"
+    return 0
+}
+#####################################suffix()#####################################
+# Syntax: suffix string1 string2
+# Syntax: suffix - string2
+# This function would suffix string1 to string2. If '-' is used in place of
+# string1, then string1 must be piped to the function. 
+suffix()
+{
+    if [ "$1" = "-" ]; then
+       while read line; do :; done
+    else
+       line="$1"
+    fi
+    shift
+    echo "$@""$line"
+    return 0
+}
+# Examples (remove # to activate):
+#echo "San Francisco\c"  | suffix - "I love "
+#echo "John\c"  | prefix - " is here now"
+#prefix  "John\c" " is here now"
+#suffix  "San Francisco" "I love "
+######################################mkmenu()################################
+# This function creates a menu and returns the index of the menu item
+# that is selected.
+# Syntax: mkmenu row col <-b | -r>  menu-item1 menu-item2 ...
+# 
+mkmenu()
+{
+   alias BOLD='printf     "\033[1m"'
+   alias REVERSE1='printf "\033[7m"'                     #color
+#  alias RESET='printf    "\033[0m"'
+   exec > /dev/tty
+
+   declare -i number  row col ro1 col1 i=0 j k
+   if (( $# < 3 )); then return -1; fi
+
+   row=$1
+   col=$2
+   attr="r"      # bold by default
+   opt="REVERSE1"
+   if  isnumber $row; then break; else return -1; fi
+   if  isnumber $col; then break; else return -1; fi
+   u=`strlen "$3"`
+   if (( u == 2 )); then
+      dash=$(expr substr "$3" 1 1)
+      if [ "$dash" = "-" ]; then 
+         attr=$(expr substr "$3" 2 1)
+         case "$attr" in
+         b)   opt="BOLD";break;;
+         r)   opt="REVERSE1";break;;
+         ?)   return -1;;
+         esac
+      else 
+          arr[$i]=$3
+          (( i += 1 ))
+      fi 
+    else
+       arr[$i]=$3
+       (( i += 1 ))
+    fi
+      
+    shift 3
+### Fill up the array
+    while (( $# > 0 )); do
+       arr[$i]="$1"
+       (( i += 1 ))
+       shift
+    done
+
+    if (( row + i > 23 )); then return -1; fi
+### Calculate the lonegest menu item
+    j=1 
+    longest=$(strlen "${arr[0]}") 
+    while (( j <= i )); do
+        u=$(strlen "${arr[$j]}")
+        if (( $u > longest )); then 
+            longest=$u 
+        fi 
+        (( j += 1 ))
+    done
+    (( row1 = row + i + 1 ))
+    (( col1 = col + longest + 3 ))
+        
+    BOX $row $col $row1 $col1 
+    (( j = row + 1 ))
+    (( k = 0 ))
+    (( col += 2 ))
+    while (( j < row1 )); do
+        LOCATE $j $col
+        echo ${arr[$k]}
+        (( k += 1 ))
+        (( j += 1 ))
+    done
+###################
+printf "\033[0m"
+(( r = row + 1 ))
+(( k = r ))
+(( i -= 1 ))
+(( j = 0 ))
+
+while :; do
+      LOCATE $r $col; eval $opt;echo ${arr[j]}    
+      x=$(getkey)
+      if [ $x = UP_ARROW ]; then
+         printf "\033[0m"
+         LOCATE $r $col; echo ${arr[j]}
+         (( r -= 1 )); (( j -= 1 ))
+         if (( r < k )); then (( r = row1 - 1 )); j=i; fi
+         LOCATE $r $col; eval $opt; echo ${arr[j]}
+      elif [ $x = DN_ARROW ]; then
+         printf "\033[0m"
+         LOCATE $r $col; echo ${arr[j]}
+         (( r += 1 )); (( j += 1 ))
+         if (( r > row1 - 1 )); then (( r = k )); j=0; fi
+         LOCATE $r $col; eval $opt; echo ${arr[j]}
+      else break
+      fi
+done
+printf "\033[0m"
+(( j += 1 ))
+#echo $j
+return $j
+}
+# Example: Remove # to activate the lines
+#CLS
+#opt=$(mkmenu 5 25 -b "Delete the file" "Stop Job" "Go to another Menu" "Use Cron" \
+#"Check the validity of the files" "Search for the target" "Quit")
+#echo $opt
+###################################chop()####################################
+chop()
+{
+    if [ -n "$1" ]; then
+       ((__a = $(strlen "$1") - 1))
+       echo "$(left "$1" "$__a")"
+    fi
+}
+##################################sizeof()###################################
+# this function returns the size of the file
+sizeof()
+{
+  if (( $# == 0 )); then
+     echo "usage: sizeof filename"
+     return 1
+  fi
+  ls -l $1 | awk '{print $5}'
+} 
+#############################################################################
+#############################################################################
+# Example: Remove # to activate the lines
+#a="Today is a nice and outside has a lovely weather"
+#b="$a"
+#for i in $(gen $(strlen "$b")); do
+#  a=$(chop "$a")
+#  echo $a
+#done
+######################################Examples######################################
+# Note-- In the following loop, change 0 to 1  to activate this sample program,
+#        or change the second 1 to 0 to diactivate it.             
+# example 1)
+loop 1,0 '{
+      CLS;
+      BOX 7  15  18  67;
+      LOCATE 8 33;
+      BOLD;
+      printf "The Sample Menu";
+      LOCATE 9 33;
+      printf "---------------";
+      LOCATE 11 20;
+      printf "1) ";
+      RESET;
+      printf "Add to the list";
+      BOLD;
+      LOCATE 12 20;
+      printf "2) ";
+      RESET;
+      printf "Delete from the list";
+      BOLD;
+      LOCATE 13 20;
+      printf "3) ";
+      RESET;
+      printf "Change the entry";
+      BOLD;
+      LOCATE 14 20;
+      printf "4) ";
+      RESET;
+      printf "Print the list";
+      BOLD;
+      LOCATE 15 20;
+      printf "5) ";
+      RESET;
+      printf "Display the list";
+      BOLD;
+      LOCATE 16 20;
+      printf "6) ";
+      RESET; 
+      printf "Quit";
+      LOCATE 19 20;
+      printf "Select the option:";
+      for i in 20 21 22; 
+      do
+          LOCATE $i 1;
+      done;
+}'
+###################################################################################
+#  In the following loop change -i to 0 to disable the infinite loop OR
+#  change 0 to -i to make an infinite loop and to enable the program.
+# example 2)
+declare -i number n=0
+loop 0 '{ 
+   r1=`rnd 1 22`;
+   r2=`rnd 1 24`;
+   c1=`rnd 1 80`;
+   c2=`rnd 1 80`;
+   if (( r2  > r1 + 1 && c2 > c1 + 1 )); then 
+      BOX $r1 $c1 $r2 $c2 \#;
+      sleep 1;
+      (( n += 1 ));
+      if (( n > 5 )); then 
+         CLS;
+         (( n = 0 ));
+      fi;
+   fi;
+}'
+#################################################################################
+# In the following loop change -i to 0 to disable and 0 to -i to enable.
+# example 3)
+declare -i number n
+loop 0 '{
+    (( n = $(rnd 1 6) ));
+   case $n in
+   1)  echo "this is one"; 
+       echo 1;;
+
+   2)  echo "this is two"; 
+       echo 2;;
+
+   3)  echo "this is three";
+       echo 3;;
+
+   4)  echo "this is four";
+       echo 4;;
+
+   5)  echo "this is five";
+       echo 5;;
+
+   6)  echo "this is six";
+       echo 6;;
+
+   esac;
+   sleep 1;
+}'
+###################################drawbox()###################################
+# This function draws a box with a solid single or double line.
+# syntax: drawbox row1 col1 row2 col2   (single line box and no title)
+# syntax: drawbox row1 col1 row2 col2 title (single line box with title)
+# syntax: drawbox -s row1 col1 row2 col2 title (same as above) 
+# syntax: drawbox -d row1 col1 row2 col2 title (double line box and title)
+# syntax: drawbox -d row1 col1 row2 col2 NULL or null  
+# syntax: drawbox -s row1 col1 row2 col2 NULL or null
+# syntax: drawbox -t      (would test your terminal capabilities)
+# Note: if NULL or null is used, the box will be drawn with an empty title
+
+drawbox()
+{
+  (                 # run it in the subshell to avoid loop intermingle
+
+      declare -i number r1 c1 r2 c2 i z 
+
+      if [ "$1" = "-t" ]; then
+         echo "If your emulation supports graphics characters, you will"
+         echo "see a solid double line below:"
+
+         for i in 1 2 3 4 5 6 7 8 9; do
+             printf "$(char 205)"
+         done
+         echo
+         return 0
+      fi 
+      flag="single_line"
+
+      if [ "$1" = "-s" ]; then
+         flag="single_line"; shift
+      elif [ "$1" = "-d" ]; then 
+         flag="double_line"; shift
+      fi
+
+      if (( $# < 4 )); then
+         echo "Usage: drawbox  <-s|-d> r1  c1  r2  c2  <title>"
+         exit 1
+      fi
+    
+      r1=$1; c1=$2; r2=$3; c2=$4; shift 4; title="$@"
+
+      (( z = c2 - c1 - 1 ))
+      if [ $flag = "single_line" ]; then
+         a1=$(char 218)    #Left upper corner
+         a2=$(char 196)    #Horizontal line
+         a3=$(char 191)    #Right upper corner
+         a4=$(char 192)    #Left lower corner
+         a5=$(char 217)    #Right lower corner
+         a6=$(char 179)    #Vertical line
+         a7=$(char 195)    #left T
+         a8=$(char 180)    #right T
+      else
+         a1=$(char 201)    #Left upper corner
+         a2=$(char 205)    #Horizontal line
+         a3=$(char 187)    #Right upper corner
+         a4=$(char 200)    #Left lower corner
+         a5=$(char 188)    #Right lower corner
+         a6=$(char 186)    #Vertical line
+         a7=$(char 204)    #left T
+         a8=$(char 185)    #right T
+      fi
+
+      line=""
+      loop 1,$z '{
+         line=`echo "${line}$a2\c"`;
+      }'
+
+      locate $r1 $c1; printf $a1; printf $line; printf $a3
+      locate $r2 $c1; printf $a4; printf $line; printf $a5
+
+      (( i = r1 + 1 ))
+      while  (( i < r2 ))
+      do
+          locate $i $c1; printf $a6
+          locate $i $c2; printf $a6
+          (( i += 1 ))
+      done
+      (( z = c2 - c1  ))
+      if [ -n "$title" ]; then
+         line=""
+         loop 1,$z '{
+            line=`echo "${line}$a2\c"`;
+         }'
+         if (( $((r2 - r1)) > 4 )); then
+            locate $(( r1 + 2 )) $c1; printf $line 
+            locate $(( r1 + 2 )) $c1; printf $a7
+            locate $(( r1 + 2 )) $c2; printf $a8
+         fi
+         if [ "$(toupper "$title")" != "NULL" ]; then
+            len=$(strlen "$title")
+            if (( len > 0 &&  len < $(( z - 2 )) )); then
+               (( loc = (z - len)/2 + c1 + 1 ))
+               locate $(( r1 + 1 )) $loc; printf "$title"
+            fi
+         fi
+      fi
+      tput sgr0
+      locate $((c2+1)) 1
+  )
+}
+

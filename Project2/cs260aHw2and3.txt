@@ -1,0 +1,109 @@
+Script started on Sun 11 Feb 2018 07:38:11 PM PST
+]0;adliano@alcatraz:~/myCs260a/HW2[?1034h[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mwhoami
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mdate
+Sun Feb 11 19:38:23 PST 2018
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr 
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -l
+oracle
+git
+adliano
+aalves3
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -cu abcd
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -l
+oracle
+git
+adliano
+aalves3
+abcd
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -du abcd
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -du abcdl[K
+oracle
+git
+adliano
+aalves3
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -c 34324
+stty: standard input: Inappropriate ioctl for device
+user aalves3 alredy exist
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -c 34324l[K
+oracle
+git
+adliano
+aalves3
+amoghtan
+achan61
+dworrell
+fnussbau
+idubinin
+igolovko
+jpeck
+mhe
+ncunana1
+nmajeed
+pkellihe
+sli325
+tfroehl1
+tlam68
+tsteve11
+mqwan
+abockove
+slee118
+tlopez31
+csilva19
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -lc 34324[1P 34324d 34324
+stty: standard input: Inappropriate ioctl for device
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -d 34324l[K
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37m
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -f users.txt 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mcat users.txt 
+user_one
+user_two
+user_three
+aalves
+jalves
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mcat users.txt [6@accmgr -f[C[C[C[C[C[C[C[C[C[C[Cl[K
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -cf users.txt 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -cf users.txt l[K
+oracle
+git
+adliano
+user_one
+user_two
+user_three
+aalves
+jalves
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -lcf users.txt [1P[1@d
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -df users.txt l[K
+oracle
+git
+adliano
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37maccmgr -l[Kh
+usage:accmgr <option> <argument> 
+  options:
+      -c [argument]  : creates user(s) account
+      -d [argument]  : deletes user(s) account
+      -f [file name] : create | delete users using file input
+      -h             : display this help menu
+      -l             : list available users on system
+      -L [CRN]       : list user from given CRN
+      -u [user id]   : create | delete user by user id 
+]0;adliano@alcatraz:~/myCs260a/HW2[31malcatraz[36m/home/adliano/myCs260a/HW2/[32m> [37mexit
+exit
+
+Script done on Sun 11 Feb 2018 07:42:30 PM PST

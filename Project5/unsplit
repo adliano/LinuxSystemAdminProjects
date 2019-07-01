@@ -1,0 +1,135 @@
+#!/bin/bash
+# Apr 26 2018
+# Adriano Alves
+# CS260A
+# HW5 unplit program to redo the split command
+# this script will put the splited files back in a single file
+
+# VARIABLES
+_output_file="noname" #default output file name
+_byte_numbers=0       #default number of bytes
+_line_numbers=0       #default number of lines
+_count_bytes=false   #flag used for check binary files
+_count_lines=false     #flag used to check text files
+
+#FUNCTIONS
+#********** help() ***********#
+help()
+{
+   cat <<EOF
+usage: unsplit <OPTION> file1 file2 file3...
+Options:
+ -c  [SIZE]      put at most SIZE bytes of lines per output file
+ -d              delete all CHUNK files
+ -f  [FILE_MANE] ouput file nae
+ -h              display this help and exit
+ -l  [NUMBER]    put NUMBER lines per output file
+EOF
+}
+#************ isBinary() ********#
+isBinary()
+{
+   _file_type=$(file -b --mime-type $1 | sed 's|/.*||')
+   if [ "$_file_type" == "application" ]; then
+      return 0 # 0 = true
+   else 
+      return 1 # 1 = false
+   fi
+}
+
+##################################################
+### get options ###
+if [[ $1 == -* ]]; then # if option available
+   _opts=":c:df:hl:" #Command Args Options
+   while getopts $_opts arg; do
+      case $arg in
+         h) help; exit 0;;
+         f) _output_file=$OPTARG ;;
+         d) rm x*; exit 0;; # REMOVE ALL CHUNK FILES
+         c) _count_bytes=true; _byte_numbers=$OPTARG;;
+         l) _count_lines=true; _line_numbers=$OPTARG;;
+         \?) echo "Invalid Option -$OPTARG"; break; exit 1;;
+         \:) echo "Option -$OPTARG requires argument";break; exit 1;;
+      esac
+   done
+
+   shift $((OPTIND-1))
+
+   ### Check if output file alredy exists ###
+   if [ -f $_output_file ] ; then
+      read -p "$_output_file alredy exist , overwrite (Y/N)?" -n 1 -r
+      if [[ $REPLY =~ ^[Yy] ]]; then
+         > $_output_file 
+      fi
+      echo ""
+   fi
+
+   ### Check if user entered input files ###
+   if  [[ $# == 0 ]]; then 
+      help
+      echo "ERROR:Missing input files"
+      exit 1
+   fi 
+
+   ### Check if option -c used ###
+   if $_count_bytes; then
+      
+      for _file in $@; do #loop tru all input files
+            #get how many bytes available on file
+            _bytes_on_file=$(wc -c $_file | cut -d" " -f1)
+
+            # check if the file have more bytes than we need
+            if (( $_bytes_on_file > $_byte_numbers ));then
+
+               cat $_file | head -c $_byte_numbers >> $_output_file
+               break;
+
+            else #if less line then we need 
+
+               cat $_file >> $_output_file
+               # update line counter
+               _byte_numbers=$(( _byte_numbers - _bytes_on_file))
+
+            fi
+      done # end of for loop
+
+   ### Check if option -l used ###
+   elif $_count_lines; then #if -l was used
+
+      for _file in $@; do                             #loop tru all input files
+         if isBinary $_file; then                     #check each file !binary
+            echo "Input file $_file is a binary file" # Display error msg
+            rm $_output_file                          #remove output file
+            exit 1                                    #exit script
+         else
+            #get how many lines available on file
+            _lines_on_file=$(wc -l $_file | cut -d" " -f1)
+
+            # check if the file have more lines than we need
+            if (( $_lines_on_file > $_line_numbers ));then
+
+               cat $_file | head -n $_line_numbers >> $_output_file
+               break;
+ 
+            else #if less line then we need 
+
+               cat $_file >> $_output_file
+               # update line counter
+               _line_numbers=$(( _line_numbers -  _lines_on_file))
+
+            fi
+         fi
+      done # end of for loop
+   else 
+      for _file in $@; do
+         cat $_file >> $_output_file
+      done
+   fi
+
+else #If no option
+      for _file in $@; do
+         cat $_file >> $_output_file
+      done
+fi
+
+#END
